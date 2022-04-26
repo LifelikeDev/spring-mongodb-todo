@@ -45,9 +45,29 @@ public class TodoController {
         try {
             todo.setCreatedAt(new Date(System.currentTimeMillis()));
             todoRepository.save(todo);
-            return new ResponseEntity<>(todo, HttpStatus.OK);
+            return new ResponseEntity<>(todo, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping("todos/{id}")
+    public ResponseEntity<?> updateTodo(@PathVariable("id") String id, @RequestBody Todo todo) {
+
+        Optional<Todo> currentToDo = todoRepository.findById(id);
+
+        if (currentToDo.isPresent()) {
+            Todo todoToBeUpdated = currentToDo.get();
+
+            todoToBeUpdated.setTodo(todo.getTodo() != null ? todo.getTodo() : todoToBeUpdated.getTodo());
+            todoToBeUpdated.setDescription(todo.getDescription() != null ? todo.getDescription() : todoToBeUpdated.getDescription());
+            todoToBeUpdated.setIsCompleted(todo.getIsCompleted() != null ? todo.getIsCompleted() : todoToBeUpdated.getIsCompleted());
+            todoToBeUpdated.setUpdatedAt(new Date(System.currentTimeMillis()));
+
+            todoRepository.save(todoToBeUpdated);
+            return new ResponseEntity<>(todoToBeUpdated, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Todo with ID " + id + " not found", HttpStatus.NOT_FOUND);
         }
     }
 }
