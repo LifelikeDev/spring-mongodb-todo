@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @AllArgsConstructor
 @RestController()
@@ -26,6 +27,18 @@ public class TodoController {
             return new ResponseEntity<>("No todos found. Consider creating one.", HttpStatus.NOT_FOUND);
         }
     }
+
+    @GetMapping("todos/{id}")
+    public ResponseEntity<?> getTodo(@PathVariable("id") String id) {
+        Optional<Todo> todo = todoRepository.findById(id);
+
+        if(todo.isPresent()) {
+            return new ResponseEntity<>(todo.get(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Todo with ID " + id + " not found", HttpStatus.NOT_FOUND);
+        }
+    }
+
 
     @PostMapping("todos")
     public ResponseEntity<?> addTodo(@RequestBody Todo todo) {
