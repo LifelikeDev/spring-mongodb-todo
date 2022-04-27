@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Getter
@@ -17,9 +18,16 @@ import java.util.Date;
 public class Todo {
     @Id
     private String id;
+
+    @NotNull(message = "todo cannot be null")
     private String todo;
+
+    @NotNull(message = "description cannot be null")
     private String description;
+
+    @NotNull(message = "whether todo isCompleted cannot be null")
     private Boolean isCompleted;
+
     private Date createdAt;
     private Date updatedAt;
 }
