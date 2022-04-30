@@ -29,6 +29,17 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
+    public Todo getTodo(String id) throws TodoCollectionException {
+        Optional<Todo> currentTodo = todoRepository.findById(id);
+
+        if (currentTodo.isEmpty()) {
+            throw new TodoCollectionException(TodoCollectionException.NotFoundException(id));
+        }
+
+        return currentTodo.get();
+    }
+
+    @Override
     public void addTodoItem(Todo todo) throws ConstraintViolationException, TodoCollectionException {
         Optional<Todo> currentTodo = todoRepository.findByTodo(todo.getTodo());
 

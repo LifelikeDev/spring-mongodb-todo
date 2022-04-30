@@ -29,12 +29,11 @@ public class TodoController {
 
     @GetMapping("todos/{id}")
     public ResponseEntity<?> getTodo(@PathVariable("id") String id) {
-        Optional<Todo> todo = todoRepository.findById(id);
-
-        if(todo.isPresent()) {
-            return new ResponseEntity<>(todo.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("Todo with ID " + id + " not found", HttpStatus.NOT_FOUND);
+        try {
+            Todo todo = todoService.getTodo(id);
+            return new ResponseEntity<>(todo, HttpStatus.OK);
+        } catch (TodoCollectionException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 

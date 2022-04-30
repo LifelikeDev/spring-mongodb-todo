@@ -9,5 +9,8 @@ import java.util.List;
 public interface TodoService {
 
     List<Todo> getAllTodos();
+
+    Todo getTodo(String id) throws TodoCollectionException;
+
     void addTodoItem(Todo todo) throws ConstraintViolationException, TodoCollectionException;
 }
