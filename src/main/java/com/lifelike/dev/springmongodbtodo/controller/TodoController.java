@@ -1,12 +1,15 @@
 package com.lifelike.dev.springmongodbtodo.controller;
 
+import com.lifelike.dev.springmongodbtodo.exception.TodoCollectionException;
 import com.lifelike.dev.springmongodbtodo.model.Todo;
 import com.lifelike.dev.springmongodbtodo.repository.TodoRepository;
+import com.lifelike.dev.springmongodbtodo.service.TodoServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.ConstraintViolationException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +18,7 @@ import java.util.Optional;
 @RestController()
 @RequestMapping("/api/v1/")
 public class TodoController {
+    private final TodoServiceImpl todoService;
     private final TodoRepository todoRepository;
 
     @GetMapping("todos")
@@ -43,11 +47,12 @@ public class TodoController {
     @PostMapping("todos")
     public ResponseEntity<?> addTodo(@RequestBody Todo todo) {
         try {
-            todo.setCreatedAt(new Date(System.currentTimeMillis()));
-            todoRepository.save(todo);
-            return new ResponseEntity<>(todo, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            todoService.addTodoItem(todo);
+            return new ResponseEntity<>(todo, HttpStatus.OK);
+        } catch (ConstraintViolationException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
+        } catch (TodoCollectionException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
     }
 
