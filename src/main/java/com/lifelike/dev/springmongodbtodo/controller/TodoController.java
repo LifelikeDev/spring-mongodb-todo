@@ -23,13 +23,8 @@ public class TodoController {
 
     @GetMapping("todos")
     public ResponseEntity<?> getAllTodos() {
-        List<Todo> todoList = todoRepository.findAll();
-
-        if(todoList.size() > 0) {
-            return new ResponseEntity<>(todoList, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("No todos found. Consider creating one.", HttpStatus.NOT_FOUND);
-        }
+        List<Todo> todos = todoService.getAllTodos();
+        return new ResponseEntity<>(todos, todos.size() > 0 ? HttpStatus.OK : HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("todos/{id}")
