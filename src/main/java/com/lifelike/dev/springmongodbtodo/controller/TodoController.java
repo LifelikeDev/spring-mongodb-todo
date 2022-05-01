@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.ConstraintViolationException;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,7 +41,7 @@ public class TodoController {
     public ResponseEntity<?> addTodo(@RequestBody Todo todo) {
         try {
             todoService.addTodoItem(todo);
-            return new ResponseEntity<>(todo, HttpStatus.OK);
+            return new ResponseEntity<>(todo, HttpStatus.CREATED);
         } catch (ConstraintViolationException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
         } catch (TodoCollectionException e) {
@@ -52,21 +51,13 @@ public class TodoController {
 
     @PutMapping("todos/{id}")
     public ResponseEntity<?> updateTodo(@PathVariable("id") String id, @RequestBody Todo todo) {
-
-        Optional<Todo> currentToDo = todoRepository.findById(id);
-
-        if (currentToDo.isPresent()) {
-            Todo todoToBeUpdated = currentToDo.get();
-
-            todoToBeUpdated.setTodo(todo.getTodo() != null ? todo.getTodo() : todoToBeUpdated.getTodo());
-            todoToBeUpdated.setDescription(todo.getDescription() != null ? todo.getDescription() : todoToBeUpdated.getDescription());
-            todoToBeUpdated.setIsCompleted(todo.getIsCompleted() != null ? todo.getIsCompleted() : todoToBeUpdated.getIsCompleted());
-            todoToBeUpdated.setUpdatedAt(new Date(System.currentTimeMillis()));
-
-            todoRepository.save(todoToBeUpdated);
-            return new ResponseEntity<>(todoToBeUpdated, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("Todo with ID " + id + " not found", HttpStatus.NOT_FOUND);
+        try {
+            todoService.updateTodo(id, todo);
+            return new ResponseEntity<>("Updated Todo successfully", HttpStatus.OK);
+        } catch (ConstraintViolationException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
+        } catch (TodoCollectionException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 

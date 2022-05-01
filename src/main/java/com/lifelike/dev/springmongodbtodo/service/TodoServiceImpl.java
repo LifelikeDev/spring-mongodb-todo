@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @AllArgsConstructor
 @Service
-public class TodoServiceImpl implements TodoService {
+                    public class TodoServiceImpl implements TodoService {
     private final TodoRepository todoRepository;
 
     @Override
@@ -49,6 +49,29 @@ public class TodoServiceImpl implements TodoService {
 
        todo.setCreatedAt(new Date(System.currentTimeMillis()));
        todoRepository.save(todo);
+    }
+
+    @Override
+    public void updateTodo(String id, Todo todoParam) throws TodoCollectionException {
+        Optional<Todo> foundTodo = todoRepository.findById(id);
+        Optional<Todo> foundTodoWithContent = todoRepository.findByTodo(todoParam.getTodo());
+
+        if (foundTodo.isPresent()) {
+            if (foundTodoWithContent.isPresent() && foundTodoWithContent.get().getId().equals(id)) {
+                throw new TodoCollectionException(TodoCollectionException.AlreadyExists());
+            }
+
+            Todo todoToBeUpdated = foundTodo.get();
+
+            todoToBeUpdated.setTodo(todoParam.getTodo());
+            todoToBeUpdated.setDescription(todoParam.getDescription());
+            todoToBeUpdated.setIsCompleted(todoParam.getIsCompleted());
+            todoToBeUpdated.setUpdatedAt(new Date(System.currentTimeMillis()));
+
+            todoRepository.save(todoToBeUpdated);
+        } else {
+            throw new TodoCollectionException(TodoCollectionException.NotFoundException(id));
+        }
     }
 }
 
