@@ -2,7 +2,6 @@ package com.lifelike.dev.springmongodbtodo.controller;
 
 import com.lifelike.dev.springmongodbtodo.exception.TodoCollectionException;
 import com.lifelike.dev.springmongodbtodo.model.Todo;
-import com.lifelike.dev.springmongodbtodo.repository.TodoRepository;
 import com.lifelike.dev.springmongodbtodo.service.TodoServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -11,14 +10,12 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.ConstraintViolationException;
 import java.util.List;
-import java.util.Optional;
 
 @AllArgsConstructor
 @RestController()
 @RequestMapping("/api/v1/")
 public class TodoController {
     private final TodoServiceImpl todoService;
-    private final TodoRepository todoRepository;
 
     @GetMapping("todos")
     public ResponseEntity<?> getAllTodos() {

@@ -24,7 +24,7 @@ public class TodoServiceImpl implements TodoService {
         if (todos.size() > 0) {
             return todos;
         } else {
-            return new ArrayList<Todo>();
+            return new ArrayList<>();
         }
     }
 
